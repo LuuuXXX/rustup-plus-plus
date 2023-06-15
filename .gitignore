@@ -1,0 +1,26 @@
+# 忽略编译输出和临时文件
+/target/
+Cargo.lock
+*.swp
+*.bak
+
+# 忽略系统和编辑器生成的文件
+.DS_Store
+.vscode/
+.idea/
+
+# 忽略日志文件
+*.log
+
+# 忽略敏感信息和配置文件
+secrets.toml
+config.ini
+.env
+
+# 忽略特定文件或目录
+/example.txt
+/docs/
+
+# 忽略文件扩展名
+*.exe
+*.zip

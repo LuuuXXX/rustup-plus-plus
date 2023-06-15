@@ -1,0 +1,10 @@
+# 还差一个 crates.io 地址的配置过程
+RUSTUP_DIST_SERVER: http://example.com
+RUSTUP_UPDATE_ROOT: http://example.com
+targets:
+  - target: x86_64-pc-windows-msvc
+    channel: stable
+    profile: default
+    extended:
+      - grcov
+      - other_tool
