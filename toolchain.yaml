@@ -1,10 +1,26 @@
+# *********************************************************************************
+# EXAMPLE
 # 还差一个 crates.io 地址的配置过程
+# Standard release channel toolchain names have the following form:
+#        <channel>[-<date>][-<host>]
+#        <channel>       = stable|beta|nightly|<major.minor>|<major.minor.patch>
+#        <date>          = YYYY-MM-DD
+#        <host>          = <target-triple>
+#
+# 'channel' is a named release channel, a major and minor version
+#     number such as `1.42`, or a fully specified version number, such
+#     as `1.42.0`. Channel names can be optionally appended with an
+#     archive date, as in `nightly-2014-12-18`, in which case the
+#     toolchain is downloaded from the archive for that date.
+# *********************************************************************************
+
 RUSTUP_DIST_SERVER: http://example.com
 RUSTUP_UPDATE_ROOT: http://example.com
 targets:
   - target: x86_64-pc-windows-msvc
-    channel: stable
+    channel: nightly
+    date: 2023-06-14
     profile: default
     extended:
       - grcov
-      - other_tool
+      - rust-code-analysis-cli

@@ -9,22 +9,24 @@ pub enum SubCommand {
         long_about = "Arguments:
         This subcommand optionally accepts `<PATH>` which succeeds if formatting is correct and
         fails if it is not. For example:
-            rustup_plus_plus install /home/toolchain.yaml"
+            rustup_plus_plus install -s /home/toolchain.yaml"
     )]
     Install {
-        #[arg(required = true)]
-        path: Option<PathBuf>,
+        #[arg(short, long, required = true)]
+        source_dir: Option<PathBuf>,
     },
     #[clap(
         name = "package",
         long_about = "Arguments:
     This subcommand optionally accepts `<PATH>` which succeeds if formatting is correct and
         fails if it is not. For example:
-            rustup_plus_plus package /home/toolchain.yaml"
+            rustup_plus_plus package -s /home/toolchain.yaml -o /home/package/"
     )]
     Package {
-        #[arg(required = true)]
-        path: Option<PathBuf>,
+        #[arg(short, long, required = true)]
+        source_dir: Option<PathBuf>,
+        #[arg(short, long, required = true)]
+        output_dir: Option<PathBuf>,
     },
 }
 

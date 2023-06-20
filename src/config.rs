@@ -21,6 +21,7 @@ pub enum Profile {
 #[derive(Default, Clone, Deserialize, Debug)]
 pub struct TargetSelection {
     pub target: Option<String>,
+    pub date: Option<String>,
     pub channel: Option<Channel>,
     pub profile: Option<Profile>,
     #[serde(rename = "extended")]
@@ -76,7 +77,6 @@ impl<'de> Deserialize<'de> for Profile {
         }
     }
 }
-
 
 impl Config {
     pub fn default_opts() -> Config {
