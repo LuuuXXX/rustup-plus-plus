@@ -3,9 +3,6 @@ use std::{process::Command, error::Error};
 use std::path::Path;
 use std::path::PathBuf;
 
-use std::fs::File;
-use std::io::copy;
-
 pub fn canonicalize_path(path: &Path) -> Option<PathBuf> {
     match std::fs::canonicalize(path) {
         Ok(path) => Some(path),
@@ -13,7 +10,21 @@ pub fn canonicalize_path(path: &Path) -> Option<PathBuf> {
     }
 }
 
-pub fn run_command(cmd: &String, args: &Vec<String>) -> Result<(), Box<dyn Error>> {
+pub fn run_rustup(args: &Vec<String>) {
+    let command = "rustup".to_string();
+    if let Err(err) = run_command(&command, &args) {
+        println!("Failed to install toolchain, cause: {}", err);
+    }
+}
+
+pub fn run_cargo(args: &Vec<String>) {
+    let command = "cargo".to_string();
+    if let Err(err) = run_command(&command, &args) {
+        println!("Failed to install toolchain, cause: {}", err);
+    }
+}
+
+fn run_command(cmd: &String, args: &Vec<String>) -> Result<(), Box<dyn Error>> {
     let output = Command::new(cmd)
         .args(args)
         .stdout(std::process::Stdio::inherit())
@@ -21,62 +32,10 @@ pub fn run_command(cmd: &String, args: &Vec<String>) -> Result<(), Box<dyn Error
         .output()?;
 
     if output.status.success() {
-        let stdout = String::from_utf8_lossy(&output.stdout);
-        println!("Execute {} command succeeded:\n{}", cmd, stdout);
+        println!("Execute {} command succeeded", cmd);
         Ok(())
     } else {
-        let stderr = String::from_utf8_lossy(&output.stderr);
-        eprintln!("Execute {} command failed:\n{}", cmd, stderr);
+        eprintln!("Execute {} command failed", cmd);
         Err("Execute command failed".into())
-    }
-}
-
-pub fn run_command_without_output(cmd: &String, args: &Vec<String>) -> Result<(), Box<dyn Error>> {
-    let output = Command::new(cmd)
-        .args(args)
-        .output()?;
-
-    if output.status.success() {
-        let stdout = String::from_utf8_lossy(&output.stdout);
-        println!("Execute {} command succeeded:\n{}", cmd, stdout);
-        Ok(())
-    } else {
-        let stderr = String::from_utf8_lossy(&output.stderr);
-        eprintln!("Execute {} command failed:\n{}", cmd, stderr);
-        Err("Execute command failed".into())
-    }
-}
-
-pub async fn download_file(url:&str, output_file: &str) -> Result<(), Box<dyn Error>>{
-    println!("Downloading {} ...", url);
-
-
-    println!("Download completed successfully");
-
-    Ok(())
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn test_canonicalize_path() {
-        todo!()
-    }
-
-    #[test]
-    fn test_run_command() {
-        todo!()
-    }
-
-    #[test]
-    fn test_run_command_without_output() {
-        todo!()
-    }
-
-    #[test]
-    fn test_download_file() {
-        todo!()
     }
 }

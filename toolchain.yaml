@@ -16,11 +16,13 @@
 
 RUSTUP_DIST_SERVER: http://example.com
 RUSTUP_UPDATE_ROOT: http://example.com
-targets:
+TARGETS:
   - target: x86_64-pc-windows-msvc
     channel: nightly
-    date: 2023-06-14
+    date: 2023-06-15
     profile: default
-    extended:
-      - grcov
-      - rust-code-analysis-cli
+EXTEND_TOOLS:
+  - name: grcov
+    version: 0.8.18
+  - name: rust-code-analysis-cli
+    version: 0.0.24
