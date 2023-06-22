@@ -1,11 +1,11 @@
 use clap::Parser;
-use rustup_plus_plus::{Options, Config, canonicalize_path, install::run_install, package::run_package};
+use rustup_distribution::{Options, Config, canonicalize_path, install::run_install, package::run_package};
 
 fn main() {
     let opts = Options::parse();
     
     match opts.subcommand {
-        rustup_plus_plus::SubCommand::Install { source_dir } => {
+        rustup_distribution::SubCommand::Install { source_dir } => {
             if let Some(source_dir) = &source_dir {
                 let source_dir = canonicalize_path(source_dir).unwrap_or_else(|| {
                     println!("Invalid or non-existent source directory: {:?}", source_dir);
@@ -21,7 +21,7 @@ fn main() {
                 std::process::exit(1);
             }
         },
-        rustup_plus_plus::SubCommand::Package { source_dir, output_dir } => {
+        rustup_distribution::SubCommand::Package { source_dir, output_dir } => {
             match (source_dir, output_dir) {
                 (Some(source_dir), Some(output_dir)) => {
                     let source_dir = canonicalize_path(&source_dir).unwrap_or_else(|| {

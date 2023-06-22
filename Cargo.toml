@@ -1,12 +1,12 @@
 [package]
-name = "rustup-plus-plus"
+name = "rustup-distribution"
 version = "0.1.0"
 edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [[bin]]
-name = "rustup_plus_plus"
+name = "rustup-distribution"
 path = "src/main.rs"
 
 [dependencies]
