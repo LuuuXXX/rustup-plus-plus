@@ -3,7 +3,7 @@ use std::{env, path::PathBuf, fs};
 use serde::Deserialize;
 
 // Deprecated
-pub static DEFAULT_RUSTUP_DIST_SERVER: &str = "https://static.rust-lang.org/dist";
+pub static DEFAULT_RUSTUP_DIST_SERVER: &str = "https://static.rust-lang.org";
 pub static DEFAULT_RUSTUP_UPDATE_ROOT: &str = "https://static.rust-lang.org/rustup";
 
 // Fully-resolved toolchain descriptors. These always have full target
@@ -105,6 +105,13 @@ impl TargetSelection {
         match self.date.as_ref() {
             Some(date) => format!("{}-{}-{}", self.channel, date, self.target),
             None => format!("{}-{}", self.channel, self.target),
+        }
+    }
+
+    pub fn package_dir(&self, dist_root: &String) -> String {
+        match self.date {
+            None => dist_root.to_string(),
+            Some(ref date) => format!("{dist_root}/dist/{date}"),
         }
     }
 }

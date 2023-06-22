@@ -12,3 +12,16 @@ pub use crate::download::*;
 
 mod subcommands;
 pub use crate::subcommands::*;
+
+mod backend;
+pub use crate::backend::*;
+
+pub enum Backend {
+    Curl,
+    Reqwest(TlsBackend),
+}
+
+pub enum TlsBackend {
+    Rustls,
+    Default,
+}

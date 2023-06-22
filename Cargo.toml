@@ -10,9 +10,21 @@ name = "rustup_plus_plus"
 path = "src/main.rs"
 
 [dependencies]
+anyhow = "1.0.71"
 clap = { version = "4.3.2", features = ["derive"] }
 serde = { version = "1.0.164", features=["derive"] }
 serde_yaml = { version = "0.9.21" }
 
 reqwest = { version = "0.11", features = ["json"] }
 tokio = { version = "1", features = ["full"] }
+
+url = "2.4"
+
+curl = { version = "0.4" }
+
+[dependencies.openssl]
+# Used by `curl` or `reqwest` backend although it isn't imported by our rustup :
+# this allows controlling the vendoring status without exposing the presence of
+# the download crate.
+optional = true
+version = "0.10"
