@@ -54,14 +54,22 @@ pub fn parse_url(url: &String) -> Result<Url> {
 pub fn run_rustup(args: &Vec<String>) {
     let command = "rustup".to_string();
     if let Err(err) = run_command(&command, &args) {
-        println!("Failed to install toolchain, cause: {}", err);
+        println!("Failed to run rustup, cause: {}", err);
     }
 }
 
 pub fn run_cargo(args: &Vec<String>) {
     let command = "cargo".to_string();
     if let Err(err) = run_command(&command, &args) {
-        println!("Failed to install toolchain, cause: {}", err);
+        println!("Failed to run cargo, cause: {}", err);
+    }
+}
+
+pub fn run_tar(args: &Vec<String>) {
+    println!("{:?}", &args);
+    let command = "tar".to_string();
+    if let Err(err) = run_command(&command, &args) {
+        println!("Failed to package, cause: {}", err);
     }
 }
 
