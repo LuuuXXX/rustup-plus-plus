@@ -1,6 +1,6 @@
 use std::{io::{Error}, env};
 
-use crate::{Config, TargetSelection, run_rustup, ExtendTool, run_cargo};
+use crate::{Config, TargetSelection, ExtendTool, CommandRunner, Runner};
 
 pub fn run_install(config: &Config) -> Result<(), Error>{
     env::set_var("RUSTUP_DIST_SERVER", &config.rustup_dist_server);
@@ -30,7 +30,9 @@ fn install_toolchain(target_selection: &TargetSelection) {
         args.push(profile.to_string());
     }
 
-    run_rustup(&args);
+    if let Err(e) = CommandRunner::Rustup.run_command(&args) {
+        panic!("CommandRunner failed {}", e);
+    };
 }
 
 fn install_extra_tools(tool: &ExtendTool) {
@@ -40,5 +42,7 @@ fn install_extra_tools(tool: &ExtendTool) {
     args.push("install".to_string());
     args.push(tool.to_lowercase());
 
-    run_cargo(&args);
+    if let Err(e) = CommandRunner::Cargo.run_command(&args) {
+        panic!("CommandRunner failed {}", e);
+    }
 }

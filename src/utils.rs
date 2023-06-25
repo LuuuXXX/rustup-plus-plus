@@ -51,40 +51,36 @@ pub fn parse_url(url: &String) -> Result<Url> {
     Url::parse(url).with_context(|| format!("failed to parse url: {}", url))
 }
 
-pub fn run_rustup(args: &Vec<String>) {
-    let command = "rustup".to_string();
-    if let Err(err) = run_command(&command, &args) {
-        println!("Failed to run rustup, cause: {}", err);
-    }
+pub trait Runner {
+    fn run_command(&self, args: &[String]) -> Result<(), Box<dyn Error>>;
 }
 
-pub fn run_cargo(args: &Vec<String>) {
-    let command = "cargo".to_string();
-    if let Err(err) = run_command(&command, &args) {
-        println!("Failed to run cargo, cause: {}", err);
-    }
+pub enum CommandRunner {
+    Rustup,
+    Cargo,
+    Tar,
 }
 
-pub fn run_tar(args: &Vec<String>) {
-    println!("{:?}", &args);
-    let command = "tar".to_string();
-    if let Err(err) = run_command(&command, &args) {
-        println!("Failed to package, cause: {}", err);
-    }
-}
+impl Runner for CommandRunner {
+    fn run_command(&self, args: &[String]) -> Result<(), Box<dyn Error>> {
+        let (command, label) = match self {
+            CommandRunner::Rustup => ("rustup", "rustup"),
+            CommandRunner::Cargo => ("cargo", "cargo"),
+            CommandRunner::Tar => ("tar", "package"),
+        };
 
-fn run_command(cmd: &String, args: &Vec<String>) -> Result<(), Box<dyn Error>> {
-    let output = Command::new(cmd)
+        let output = Command::new(command)
         .args(args)
         .stdout(std::process::Stdio::inherit())
         .stderr(std::process::Stdio::inherit())
         .output()?;
 
-    if output.status.success() {
-        println!("Execute {} command succeeded", cmd);
-        Ok(())
-    } else {
-        eprintln!("Execute {} command failed", cmd);
-        Err("Execute command failed".into())
+        if output.status.success() {
+            println!("Execute {} command succeeded", label);
+            Ok(())
+        } else {
+            eprintln!("Execute {} command failed", label);
+            Err("Execute command failed".into())
+        }
     }
 }

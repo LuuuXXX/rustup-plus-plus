@@ -1,6 +1,6 @@
 use std::{io::Error, path::PathBuf, env, fs};
 
-use crate::{Config, DownloadCfg, ExtendTool, run_cargo, run_tar};
+use crate::{Config, DownloadCfg, ExtendTool, CommandRunner, Runner};
 
 pub fn run_package(config: &Config, output_dir: &PathBuf) -> Result<(), Error>{
     env::set_var("RUSTUP_USE_CURL", "true");
@@ -61,7 +61,9 @@ fn package_extra_tool(tool: &ExtendTool, package_dir: &PathBuf) {
     args.push(format!("{}/{}", parent_dir.to_string_lossy().to_owned(), package_name));
     args.push(package_dir.to_string_lossy().into_owned());
 
-    run_tar(&args);
+    if let Err(e) = CommandRunner::Tar.run_command(&args) {
+        panic!("CommandRunner failed {}", e);
+    };
 
     fs::remove_dir_all(package_dir).expect("Failed to remove package directory");
 }
@@ -73,7 +75,9 @@ fn install_tool_local_directory(tool: &ExtendTool, package_dir: &PathBuf) {
     args.push("--root".to_string());
     args.push(package_dir.to_string_lossy().into_owned());
     
-    run_cargo(&args);
+    if let Err(e) = CommandRunner::Cargo.run_command(&args){
+        panic!("CommandRunner failed {}", e);
+    };
 }
 
 fn init_package_dir(tool: &ExtendTool, output_dir: &PathBuf) -> String {
