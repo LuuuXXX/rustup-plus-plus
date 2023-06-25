@@ -1,6 +1,12 @@
 # Rustup-distribution: the OffLine Rust toolchain packager
 Implement a custom Rust offline installation package by adding a simple configuration file.
 
+# Prepare
+Install rust official toolchain.
+```shell
+curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+```
+
 # Usage
 Executing the build command will package the required toolchain into the Rust distribution package format, which is consistent with the format and usage of the official Rust offline distribution.
 `/path/to/toolchain.yaml` The path to local configuration file.
