@@ -2,7 +2,7 @@ use std::{path::{PathBuf, Path}, ops, fs::{self, remove_file, OpenOptions}, env,
 
 use anyhow::{Result, Context};
 
-use crate::{utils, Backend, TlsBackend, curl};
+use crate::{utils, Backend, TlsBackend, curl, CommandRunner, Runner};
 
 use url::Url;
 
@@ -13,7 +13,7 @@ pub struct DownloadCfg {
 }
 
 pub struct File {
-    path: PathBuf,
+    pub path: PathBuf,
 }
 
 impl ops::Deref for File {
@@ -49,6 +49,30 @@ impl DownloadCfg {
 
         Ok(File { path: target_file })
     }
+
+    pub fn extract_after_download(&self, target_file_name: &String) -> Result<File> {
+        match self.download(target_file_name) {
+            Ok(target_file) => {
+                let target_folder = utils::strip_extensions(&utils::strip_extensions(&target_file.to_path_buf()));
+                utils::ensure_dir_exists(&"Rust package".to_string(), &target_folder)?;
+                let mut args = Vec::new();
+                args.push("zxvf".to_string());
+                args.push(target_file.to_owned().to_string_lossy().to_string());
+                args.push("-C".to_string());
+                args.push(target_folder.parent().expect("Wrong target folder").to_owned().to_string_lossy().to_string());
+                if let Err(err) = CommandRunner::Tar.run_command(&args) {
+                    panic!("Error running command: {:?}", err);
+                };
+                
+                fs::remove_file(&*target_file).context("cleaning up downloaded package")?;
+
+                Ok(File { path: target_folder })
+            },
+            Err(_) => {
+                panic!("Failed to extract target folder");
+            },
+        }
+    }
 }
 
 pub fn download_v1_manifest() {
@@ -57,10 +81,6 @@ pub fn download_v1_manifest() {
 
 fn download_file(url: &Url, path: &PathBuf) -> Result<()> {
     // Download the file
-
-    println!("URL {:?}", url.to_string());
-    println!("PATH {:?}", path);
-
     // Keep the curl env var around for a bit
     let use_curl_backend = env::var_os("RUSTUP_USE_CURL").is_some();
     let use_rustls = env::var_os("RUSTUP_USE_RUSTLS").is_some();
@@ -145,5 +165,16 @@ mod tests {
         if let Ok(url) = url {
             let _ = download_file(&url, &path);
         }
+    }
+
+    #[test]
+    fn test_extract_download_file() {
+        env::set_var("RUSTUP_USE_CURL", "true");
+        let download_cfg = DownloadCfg{
+            dist_root: "https://mirrors.tuna.tsinghua.edu.cn/rustup/dist/2023-06-25/cargo-nightly-aarch64-apple-darwin.tar.gz".to_string(),
+            download_dir: PathBuf::from(r"D:\Normal\projects\rustup-plus-plus\"),
+        };
+        let target_file_name = "cargo-nightly-aarch64-apple-darwin.tar.gz".to_string();
+        let _ = download_cfg.extract_after_download(&target_file_name);
     }
 }

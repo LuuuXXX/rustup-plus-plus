@@ -47,6 +47,17 @@ pub fn canonicalize_path(path: &Path) -> Option<PathBuf> {
     }
 }
 
+// remove the file extension
+// eg: /path/to/file.tar.gz -> /path/to/file
+pub fn strip_extensions(path: &PathBuf) -> PathBuf {
+    let mut new_path = path.clone();
+    if let Some(_ext) = new_path.extension() {
+        new_path = new_path.with_extension("");
+    }
+
+    new_path
+}
+
 pub fn parse_url(url: &String) -> Result<Url> {
     Url::parse(url).with_context(|| format!("failed to parse url: {}", url))
 }
@@ -82,5 +93,17 @@ impl Runner for CommandRunner {
             eprintln!("Execute {} command failed", label);
             Err("Execute command failed".into())
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    pub fn test_strip_extensions() {
+        let path = PathBuf::from("/path/to/directory.tar.gz");
+        let path_without_extension = strip_extensions(&strip_extensions(&path));
+        println!("{:?}", path_without_extension);  // 输出: /path/to/directory
     }
 }
