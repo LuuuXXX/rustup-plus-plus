@@ -59,7 +59,7 @@ fn try_package(target_file_name: &String, output_dir: &PathBuf, file: &Path) -> 
     args.push(".".to_string());
 
     CommandRunner::Tar.run_command(&args).unwrap();
-    fs::remove_dir(file).expect("Failed to remove directory after tar command successfully");
+    fs::remove_dir_all(file).expect("Failed to remove directory after tar command successfully");
 
     Ok(())
 }
